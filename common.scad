@@ -13,3 +13,23 @@ function second_mount_radius() = i2mm(2);
 function hole_diam() = i2mm(1/8) + 0.5;
 
 function arm_width() = i2mm(0.5);
+
+// thickness of each of the 2 hub plates.
+function hub_thickness() = i2mm(.375);
+
+// thickness of each of arm plate.
+function arm_thickness() = i2mm(0.375);
+
+// makes the spacer that accomodates 1 arm plate and 1 hub plate.
+module spacer() {
+    // shell thickness of spacer that separates the motor from the top surface arm.
+    spacer_thickness = 2;
+    difference() {
+        h = hub_thickness() + arm_thickness();
+        od = hole_diam() + 2 * spacer_thickness;
+        cube([od, od, h], center = true);
+        id = hole_diam();
+        cube([id, id, 2 * h], center = true);
+    }
+}
+

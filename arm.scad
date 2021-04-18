@@ -12,27 +12,9 @@ mount_dim = 33;
 // assumes all motors are equidistant from center.
 arm_length = i2mm(6 + 3/16);
 
-arm_thickness = i2mm(0.375);
-
-motor_mount_thickness = arm_thickness;
-
-// shell thickness of spacer that separates the motor from the top surface arm.
-spacer_thickness = 2;
-
-// height of spacer that separates the motor from the top surface arm.
-spacer_height = 2;
+motor_mount_thickness = arm_thickness();
 
 motor_mount_arm_width = i2mm(3/8);
-
-module spacer() {
-    difference() {
-        h = motor_mount_thickness + spacer_height;
-        od = hole_diam() + 2 * spacer_thickness;
-        cube([od, od, h], center = true);
-        id = hole_diam();
-        cube([id, id, 2 * h], center = true);
-    }
-}
 
 module motor_cross() {
     difference() {
@@ -40,7 +22,7 @@ module motor_cross() {
             extension = 0 * hole_diam() / 2;
             cube(size = [mount_dim + 2 * extension, motor_mount_arm_width, motor_mount_thickness], center = true);
             cube(size = [motor_mount_arm_width, mount_dim + 2 * extension, motor_mount_thickness], center = true);
-            translate([0, 0, spacer_thickness / 2]) {
+            translate([0, 0, hub_thickness() / 2]) {
                 translate([-mount_dim / 2, 0, 0])
                     spacer();
                 translate([mount_dim / 2, 0, 0])
@@ -54,27 +36,30 @@ module motor_cross() {
 
         cut_dim = 2 * hole_diam();
         cut_shift = hole_diam() / 2;
+        cut_height = 4 * hub_thickness();
         translate([-mount_dim / 2 - cut_shift, 0, 0])
-            cube(size = [cut_dim, hole_diam(), 2 * motor_mount_thickness], center = true);
+            cube(size = [cut_dim, hole_diam(), cut_height], center = true);
         translate([mount_dim / 2 + cut_shift, 0, 0])
-            cube(size = [cut_dim, hole_diam(), 2 * motor_mount_thickness], center = true);
+            cube(size = [cut_dim, hole_diam(), cut_height], center = true);
         translate([0, mount_dim / 2 + cut_shift, 0])
-            cube(size = [hole_diam(), cut_dim, 2 * motor_mount_thickness], center = true);
+            cube(size = [hole_diam(), cut_dim, cut_height], center = true);
         translate([0, -mount_dim / 2 - cut_shift, 0])
-            cube(size = [hole_diam(), cut_dim, 2 * motor_mount_thickness], center = true);
+            cube(size = [hole_diam(), cut_dim, cut_height], center = true);
     }
 }
 
-rotate([0, 0, 45])
-    motor_cross();
-difference() {
-    arm_length_ = arm_length - first_mount_radius() + hole_diam() / 2;
-    translate([-arm_length_ / 2, 0, 0])
-        cube(size = [arm_length_, arm_width(), arm_thickness], center = true);
-    cut_dim = 2 * hole_diam();
-    cut_shift = hole_diam() / 2;
-    translate([-arm_length + first_mount_radius() - cut_shift, 0, 0])
-        cube(size = [cut_dim, hole_diam(), 2 * arm_thickness], center = true);
-    translate([-arm_length + second_mount_radius(), 0, 0])
-        cube(size = [hole_diam(), hole_diam(), 2 * arm_thickness], center = true);
+rotate([0, 0, 45]) { // to facilitate better fit when print bed is size-limited.
+    rotate([0, 0, 45])
+        motor_cross();
+    difference() {
+        arm_length_ = arm_length - first_mount_radius() + hole_diam() / 2;
+        translate([-arm_length_ / 2, 0, 0])
+            cube(size = [arm_length_, arm_width(), arm_thickness()], center = true);
+        cut_dim = 2 * hole_diam();
+        cut_shift = hole_diam() / 2;
+        translate([-arm_length + first_mount_radius() - cut_shift, 0, 0])
+            cube(size = [cut_dim, hole_diam(), 2 * arm_thickness()], center = true);
+        translate([-arm_length + second_mount_radius(), 0, 0])
+            cube(size = [hole_diam(), hole_diam(), 2 * arm_thickness()], center = true);
+    }
 }
