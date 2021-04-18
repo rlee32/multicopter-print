@@ -14,7 +14,7 @@ arm_length = i2mm(6 + 3/16);
 
 arm_thickness = i2mm(0.375);
 
-motor_mount_thickness = i2mm(0.25);
+motor_mount_thickness = arm_thickness;
 
 // shell thickness of spacer that separates the motor from the top surface arm.
 spacer_thickness = 2;
@@ -67,5 +67,14 @@ module motor_cross() {
 
 rotate([0, 0, 45])
     motor_cross();
-translate([-arm_length / 2, 0, 0])
-    cube(size = [arm_length, arm_width(), arm_thickness], center = true);
+difference() {
+    arm_length_ = arm_length - first_mount_radius() + hole_diam() / 2;
+    translate([-arm_length_ / 2, 0, 0])
+        cube(size = [arm_length_, arm_width(), arm_thickness], center = true);
+    cut_dim = 2 * hole_diam();
+    cut_shift = hole_diam() / 2;
+    translate([-arm_length + first_mount_radius() - cut_shift, 0, 0])
+        cube(size = [cut_dim, hole_diam(), 2 * arm_thickness], center = true);
+    translate([-arm_length + second_mount_radius(), 0, 0])
+        cube(size = [hole_diam(), hole_diam(), 2 * arm_thickness], center = true);
+}
