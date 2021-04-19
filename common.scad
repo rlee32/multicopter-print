@@ -15,10 +15,10 @@ function hole_diam() = i2mm(1/8) + 0.5;
 function arm_width() = i2mm(0.5);
 
 // thickness of each of the 2 hub plates.
-function hub_thickness() = i2mm(.375);
+function hub_thickness() = i2mm(.25);
 
 // thickness of each of arm plate.
-function arm_thickness() = i2mm(0.375);
+function arm_thickness() = i2mm(0.25);
 
 // makes the spacer that accomodates 1 arm plate and 1 hub plate.
 module spacer() {
