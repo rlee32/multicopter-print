@@ -16,6 +16,13 @@ motor_mount_thickness = arm_thickness();
 
 motor_mount_arm_width = i2mm(3/8);
 
+// For a downward-facing arm, set this to true to print a cylindrical landing leg.
+landing_leg = false;
+landing_leg_length = i2mm(5);
+landing_leg_r1 = arm_width() / 2; // radius of base of landing leg.
+landing_leg_r2 = arm_width() / 4; // radius of tip (ground-touching part) of landing leg.
+landing_leg_position = 15; // landing leg position relative to second_mount_radius().
+
 module motor_cross() {
     difference() {
         union() {
@@ -52,9 +59,14 @@ rotate([0, 0, 45]) { // to facilitate better fit when print bed is size-limited.
     rotate([0, 0, 45])
         motor_cross();
     difference() {
-        arm_length_ = arm_length - first_mount_radius() + hole_diam() / 2;
-        translate([-arm_length_ / 2, 0, 0])
-            cube(size = [arm_length_, arm_width(), arm_thickness()], center = true);
+        union() {
+            arm_length_ = arm_length - first_mount_radius() + hole_diam() / 2;
+            translate([-arm_length_ / 2, 0, 0])
+                cube(size = [arm_length_, arm_width(), arm_thickness()], center = true);
+            circle_resolution = 50;
+            translate([-arm_length + second_mount_radius() + landing_leg_position, 0, 0])
+                cylinder(h = landing_leg_length, r1 = landing_leg_r1, r2 = landing_leg_r2, $fn=circle_resolution);
+        }
         cut_dim = 2 * hole_diam();
         cut_shift = hole_diam() / 2;
         translate([-arm_length + first_mount_radius() - cut_shift, 0, 0])

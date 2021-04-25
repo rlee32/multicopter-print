@@ -10,7 +10,7 @@ function first_mount_radius() = i2mm(1);
 function second_mount_radius() = i2mm(2);
 
 // diameter of hole for fasteners between arm and hub.
-function hole_diam() = i2mm(1/8) + 0.5;
+function hole_diam() = i2mm(1/8) + 0.25;
 
 function arm_width() = i2mm(0.5);
 
