@@ -20,6 +20,12 @@ function hub_thickness() = i2mm(.25);
 // thickness of each of arm plate.
 function arm_thickness() = i2mm(0.25);
 
+// distance between general-purpose mounting holes arranged in a square.
+function gp_mount_dim() = i2mm(0.75);
+
+// minimum distance to edge from general-purpose mounting holes.
+function gp_mount_margin() = i2mm(0.125);
+
 // makes the spacer that accomodates 1 arm plate and 1 hub plate.
 module spacer() {
     // shell thickness of spacer that separates the motor from the top surface arm.
