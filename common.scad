@@ -26,6 +26,10 @@ function gp_mount_dim() = i2mm(0.75);
 // minimum distance to edge from general-purpose mounting holes.
 function gp_mount_margin() = i2mm(0.125);
 
+// overall width of pixhawk mount.
+// nice to have all general-purpose modules (e.g. telemetry, gps, pixhawk) the same to avoid needing extra spacers for connecting them all to side struts.
+function gp_module_width() = i2mm();
+
 // makes the spacer that accomodates 1 arm plate and 1 hub plate.
 module spacer() {
     // shell thickness of spacer that separates the motor from the top surface arm.

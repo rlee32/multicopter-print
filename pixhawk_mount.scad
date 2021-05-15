@@ -92,6 +92,7 @@ difference() {
 
     }
 
+    // side holes
     translate([0, 0, side_hole_z + thickness / 2])
         rotate([45, 0, 0])
             cube(size = [2 * pixhawk_width, hole_diam(), hole_diam()], center = true);
@@ -99,6 +100,7 @@ difference() {
         rotate([45, 0, 0])
             cube(size = [2 * pixhawk_width, hole_diam(), hole_diam()], center = true);
 
+    // bottom chamfers
     corner_cut_dim = 1.5 * pillar_width;
     dx = base_plate_dim / 2 + pillar_width + wall_thickness;
     dz = -thickness / 2;
@@ -108,4 +110,5 @@ difference() {
     translate([-dx, 0, dz])
         rotate([0, 45, 0])
             cube(size = [corner_cut_dim, 2 * pillar_length, corner_cut_dim], center = true);
+
 }
