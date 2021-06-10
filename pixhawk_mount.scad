@@ -12,6 +12,7 @@ offset = i2mm(1); // distance between base plate and bottom of pixhawk.
 base_plate_margin = i2mm(0.25); // minimum distance between base plate hole center and an edge.
 
 pixhawk_width = i2mm(1 + 9/16);
+cutout_width = i2mm(1.15);
 pixhawk_length = i2mm(2 + 3/16);
 
 wall_thickness = 2;
@@ -29,86 +30,65 @@ pillar_length = i2mm(1.5);
 
 base_plate_dim = 2 * base_plate_margin + gp_mount_dim();
 
-difference() {
-    cube(size = [base_plate_dim, base_plate_dim, thickness], center = true);
-    dx = gp_mount_dim() / 2;
+module walls() {
+    fudge = 0.5;
+    translate([wall_thickness / 2 + pixhawk_width / 2, 0, side_wall_height / 2])
+        cube(size = [wall_thickness, pixhawk_length + wall_thickness * 2, side_wall_height + fudge], center = true);
+    translate([-wall_thickness / 2 - pixhawk_width / 2, 0, side_wall_height / 2])
+        cube(size = [wall_thickness, pixhawk_length + wall_thickness * 2, side_wall_height + fudge], center = true);
+    translate([0, -wall_thickness / 2 - pixhawk_length / 2, side_wall_height / 2])
+        cube(size = [pixhawk_width, wall_thickness, side_wall_height + fudge], center = true);
+    translate([0, wall_thickness / 2 + pixhawk_length / 2, side_wall_height / 2])
+        cube(size = [pixhawk_width, wall_thickness, side_wall_height + fudge], center = true);
+}
 
-    translate([dx, dx, 0]) {
-        cube(size = [hole_diam(), hole_diam(), 2 * thickness], center = true);
-        translate([0, base_plate_margin, 0])
-            cube(size = [hole_diam(), 2 * base_plate_margin, 2 * thickness], center = true);
+module mount_holes() {
+    diag = gp_mount_dim() * sqrt(2);
+    translate([diag / 2, 0, 0]) {
+        cylinder(r = hole_diam() / 2, h = 100, center = true, $fn = 25);
+        translate([pixhawk_width / 2, 0, 0])
+            cube(size = [pixhawk_width, hole_diam(), offset * 10], center = true);
     }
-
-    translate([-dx, dx, 0]) {
-        cube(size = [hole_diam(), hole_diam(), 2 * thickness], center = true);
-        translate([0, base_plate_margin, 0])
-            cube(size = [hole_diam(), 2 * base_plate_margin, 2 * thickness], center = true);
+    translate([-diag / 2, 0, 0]) {
+        cylinder(r = hole_diam() / 2, h = 100, center = true, $fn = 25);
+        translate([-pixhawk_width / 2, 0, 0])
+            cube(size = [pixhawk_width, hole_diam(), offset * 10], center = true);
     }
-
-    translate([-dx, -dx, 0]) {
-        cube(size = [hole_diam(), hole_diam(), 2 * thickness], center = true);
-        translate([0, -base_plate_margin, 0])
-            cube(size = [hole_diam(), 2 * base_plate_margin, 2 * thickness], center = true);
+    translate([0, -diag / 2, 0]) {
+        cylinder(r = hole_diam() / 2, h = 100, center = true, $fn = 25);
+        translate([0, -pixhawk_length / 2, 0])
+            cube(size = [hole_diam(), pixhawk_length, offset * 10], center = true);
     }
-
-    translate([dx, -dx, 0]) {
-        cube(size = [hole_diam(), hole_diam(), 2 * thickness], center = true);
-        translate([0, -base_plate_margin, 0])
-            cube(size = [hole_diam(), 2 * base_plate_margin, 2 * thickness], center = true);
+    translate([0, diag / 2, 0]) {
+        cylinder(r = hole_diam() / 2, h = 100, center = true, $fn = 25);
+        translate([0, pixhawk_length / 2, 0])
+            cube(size = [hole_diam(), pixhawk_length, offset * 10], center = true);
     }
+}
 
+module tie_holes() {
+    dim = i2mm(3/16);
+    dy = 0.4 * pixhawk_length;
+    translate([0, dy, 0])
+        rotate([45, 0, 0])
+            cube(size = [pixhawk_width * 2, dim, dim], center = true);
+    translate([0, -dy, 0])
+        rotate([45, 0, 0])
+            cube(size = [pixhawk_width * 2, dim, dim], center = true);
 }
 
 difference() {
-
     union() {
-
-        // right pillar
-        dx = pillar_width / 2 + base_plate_dim / 2;
-        translate([dx, 0, offset / 2]) {
-            cube(size = [pillar_width, pillar_length, thickness + offset], center = true);
-            translate([pillar_width / 2 + wall_thickness / 2, 0, side_wall_height / 2])
-                cube(size = [wall_thickness, pillar_length + 2 * wall_thickness, thickness + offset + side_wall_height], center = true);
-            translate([wall_thickness / 2, 0, tip_wall_height / 2]) {
-                translate([0, pillar_length / 2 + wall_thickness / 2, 0])
-                    cube(size = [wall_thickness + pillar_width, wall_thickness, thickness + offset + tip_wall_height], center = true);
-                translate([0, -(pillar_length / 2 + wall_thickness / 2), 0])
-                    cube(size = [wall_thickness + pillar_width, wall_thickness, thickness + offset + tip_wall_height], center = true);
-            }
-        }
-
-        // left pillar
-        translate([-dx, 0, offset / 2]) {
-            cube(size = [pillar_width, pillar_length, thickness + offset], center = true);
-            translate([-(pillar_width / 2 + wall_thickness / 2), 0, side_wall_height / 2])
-                cube(size = [wall_thickness, pillar_length + 2 * wall_thickness, thickness + offset + side_wall_height], center = true);
-            translate([-wall_thickness / 2, 0, tip_wall_height / 2]) {
-                translate([0, pillar_length / 2 + wall_thickness / 2, 0])
-                    cube(size = [wall_thickness + pillar_width, wall_thickness, thickness + offset + tip_wall_height], center = true);
-                translate([0, -(pillar_length / 2 + wall_thickness / 2), 0])
-                    cube(size = [wall_thickness + pillar_width, wall_thickness, thickness + offset + tip_wall_height], center = true);
-            }
-        }
-
+        translate([0, 0, offset / 2])
+            walls();
+        // main block
+        cube(size = [pixhawk_width + wall_thickness * 2, pixhawk_length + wall_thickness * 2, offset], center = true);
     }
-
-    // side holes
-    translate([0, 0, side_hole_z + thickness / 2])
-        rotate([45, 0, 0])
-            cube(size = [2 * pixhawk_width, hole_diam(), hole_diam()], center = true);
-    translate([0, 0, side_hole_dz + side_hole_z + thickness / 2])
-        rotate([45, 0, 0])
-            cube(size = [2 * pixhawk_width, hole_diam(), hole_diam()], center = true);
-
-    // bottom chamfers
-    corner_cut_dim = 1.5 * pillar_width;
-    dx = base_plate_dim / 2 + pillar_width + wall_thickness;
-    dz = -thickness / 2;
-    translate([dx, 0, dz])
-        rotate([0, 45, 0])
-            cube(size = [corner_cut_dim, 2 * pillar_length, corner_cut_dim], center = true);
-    translate([-dx, 0, dz])
-        rotate([0, 45, 0])
-            cube(size = [corner_cut_dim, 2 * pillar_length, corner_cut_dim], center = true);
-
+    mount_holes();
+    // block cutouts
+    translate([0, 0, thickness])
+        cube(size = [cutout_width, pixhawk_length * 2, offset], center = true);
+    translate([0, 0, thickness])
+        cube(size = [pixhawk_width * 2, i2mm(0.5), offset], center = true);
+    tie_holes();
 }
