@@ -9,7 +9,6 @@ use <common.scad>;
 
 thickness = i2mm(0.25); // thickness of base plate, to which the hub is mounted.
 offset = i2mm(1); // distance between base plate and bottom of pixhawk.
-base_plate_margin = i2mm(0.25); // minimum distance between base plate hole center and an edge.
 
 pixhawk_width = i2mm(1 + 9/16);
 cutout_width = i2mm(1.15);
@@ -19,27 +18,16 @@ wall_thickness = 2;
 side_wall_height = i2mm(1/8);
 tip_wall_height = i2mm(1/16);
 
-side_hole_z = i2mm(0.25); // z-position of bottom-most side hole, from top of bas plate.
-side_hole_dz = i2mm(0.5); // z-position of top-most side hole, from bottom-most side hole.
-side_hole_y = i2mm(0); // y-position of side holes.
-
-// derived parameters.
-
-pillar_width = i2mm(0.25);
-pillar_length = i2mm(1.5);
-
-base_plate_dim = 2 * base_plate_margin + gp_mount_dim();
-
 module walls() {
     fudge = 0.5;
     translate([wall_thickness / 2 + pixhawk_width / 2, 0, side_wall_height / 2])
         cube(size = [wall_thickness, pixhawk_length + wall_thickness * 2, side_wall_height + fudge], center = true);
     translate([-wall_thickness / 2 - pixhawk_width / 2, 0, side_wall_height / 2])
         cube(size = [wall_thickness, pixhawk_length + wall_thickness * 2, side_wall_height + fudge], center = true);
-    translate([0, -wall_thickness / 2 - pixhawk_length / 2, side_wall_height / 2])
-        cube(size = [pixhawk_width, wall_thickness, side_wall_height + fudge], center = true);
-    translate([0, wall_thickness / 2 + pixhawk_length / 2, side_wall_height / 2])
-        cube(size = [pixhawk_width, wall_thickness, side_wall_height + fudge], center = true);
+    translate([0, -wall_thickness / 2 - pixhawk_length / 2, tip_wall_height / 2])
+        cube(size = [pixhawk_width, wall_thickness, tip_wall_height + fudge], center = true);
+    translate([0, wall_thickness / 2 + pixhawk_length / 2, tip_wall_height / 2])
+        cube(size = [pixhawk_width, wall_thickness, tip_wall_height + fudge], center = true);
 }
 
 module mount_holes() {
