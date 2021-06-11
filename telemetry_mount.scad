@@ -30,9 +30,9 @@ module mount_pillars() {
     z = i2mm(1);
     dz =  i2mm(.5);
     h = 3 * dz;
-    w = 4 * hole_diam();
-    pixhawk_width = i2mm(1 + 9/16);
-    extension = pixhawk_width / 2 - telem_width / 2;
+    w = 3 * hole_diam();
+    max_width = i2mm(2.5);
+    extension = max_width / 2 - telem_width / 2;
     difference() {
         union() {
             translate([telem_width / 2 + wall_thickness / 2 + extension / 2, 0, h / 2 - thickness / 2])
@@ -42,10 +42,10 @@ module mount_pillars() {
         }
         translate([0, 0, z + dz / 2])
             rotate([45, 0, 0])
-                cube(size = [telem_width * 2, hole_diam(), hole_diam()], center = true);
+                cube(size = [max_width * 2, hole_diam(), hole_diam()], center = true);
         translate([0, 0, z - dz / 2])
             rotate([45, 0, 0])
-                cube(size = [telem_width * 2, hole_diam(), hole_diam()], center = true);
+                cube(size = [max_width * 2, hole_diam(), hole_diam()], center = true);
     }
 }
 
